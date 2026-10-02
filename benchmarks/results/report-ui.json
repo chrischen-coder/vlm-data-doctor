@@ -1,0 +1,11 @@
+{
+  "browser": "154.0.8037.97",
+  "desktop": "1200x1160",
+  "mobile": "390x844",
+  "severityFilters": "passed",
+  "textSearch": "passed",
+  "emptyState": "passed",
+  "pageErrors": [],
+  "externalNetworkRequests": 0,
+  "mobilePageOverflow": false
+}

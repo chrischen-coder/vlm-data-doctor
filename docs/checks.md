@@ -7,7 +7,7 @@ is intentionally stricter and narrower than the union of all trainer formats.
 
 | Code | Level | Interpretation / suggested action |
 | --- | --- | --- |
-| `invalid_json` | error | Fix JSON syntax; NaN and Infinity are rejected. |
+| `invalid_json` | error | Fix JSON syntax; duplicate object keys, NaN and Infinity are rejected. |
 | `dataset_schema` | error | Use a JSON array or a `.jsonl` / `.ndjson` file. |
 | `empty_dataset` | error | Supply at least one record. |
 | `record_schema` | error | Each record must be an object. |
@@ -31,6 +31,8 @@ is intentionally stricter and narrower than the union of all trainer formats.
 | `split_sample_overlap` | error | Same full sample in train and evaluation. |
 | `split_input_overlap` | warning | Same non-assistant turns and image bytes, but different answers. |
 | `split_image_overlap` | warning | Same image bytes across splits; review task-specific grouping. |
+| `invalid_group` | error | When `--group-key` is selected, every record needs that field as a nonempty string or integer. |
+| `split_group_overlap` | error | A selected source/document/topology group appears across train and evaluation. |
 
 ## Overlap semantics
 
@@ -55,11 +57,33 @@ scientific questions. Choose the policy before interpreting model scores.
 
 ## Report contract
 
-Schema version `1.0` reports counts of source records (including malformed JSONL
+Schema version `1.1` reports counts of source records (including malformed JSONL
 records), successfully decoded unique resolved image-file paths, and findings.
 Findings include severity, code, dataset (`train`/`eval`), row, field and advice.
 Source conversation contents, ID values and image filenames are not echoed.
 Operational I/O errors use stderr and may contain filesystem paths.
+
+Version 1.1 adds `provenance` without removing the earlier summary/issue fields.
+It contains tool/profile/Python/Pillow versions, max-pixel and group settings,
+SHA-256 of each dataset's exact file bytes, and a SHA-256 of the sorted list of
+successfully decoded image-file hashes. The image list uses one entry per unique
+resolved path, so identical bytes at two different paths appear twice. Its
+serialization uses compact JSON separators and UTF-8. File names and absolute
+paths are excluded. Missing/corrupt images are not covered by that image digest.
+
+`--group-key` selects an exact top-level field name, not a nested selector. Group
+values are type-sensitive and not normalized; an integer and its string spelling
+are different groups. This policy is opt-in because group-disjoint evaluation is
+not appropriate for every task. Structurally invalid rows can still establish a
+valid group identity, while early schema failures may prevent the row from
+receiving a group-overlap finding. Correct structural errors before treating the
+audit as a complete split review.
+
+Text with unpaired Unicode surrogates is rejected as invalid content instead of
+failing later during fingerprint encoding. HTML output escapes report content and
+uses a restrictive content security policy with a fixed script hash; the report
+does not load external assets. Large reports include all rows in the DOM, so JSON
+is preferable for very large issue sets.
 
 More than one finding can refer to a record; finding counts are not failed-record
 counts. Reports use input order and do not include timestamps, so the same input

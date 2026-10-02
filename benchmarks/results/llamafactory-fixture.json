@@ -1,0 +1,51 @@
+{
+  "source": "https://github.com/hiyouga/LlamaFactory/tree/ce9dc9e072f80fa3abe0989d4ab90da25f083438/data",
+  "revision": "ce9dc9e072f80fa3abe0989d4ab90da25f083438",
+  "fixture": "mllm_demo.json",
+  "downloaded_images": [
+    {
+      "relative_path": "mllm_demo_data/1.jpg",
+      "bytes": 12324,
+      "sha256": "95d292cbe8e7151b277f8c04f670a1bd28bbb36882ed5ac0a486b6e5f6e67a0b"
+    },
+    {
+      "relative_path": "mllm_demo_data/2.jpg",
+      "bytes": 22681,
+      "sha256": "0e64ce34dc2bf99fb5083859c57bcee674b8bfece62e7d8425a87f986b3c074f"
+    },
+    {
+      "relative_path": "mllm_demo_data/3.jpg",
+      "bytes": 16105,
+      "sha256": "e4b1c7c2626bfe475c20fb8163d3644186e10db9530877ff72c0230f31f90aaf"
+    }
+  ],
+  "scope": "Fixture-schema and image decoding smoke check only. No trainer import, tokenizer, model forward pass, training or compatibility certification.",
+  "report": {
+    "schema_version": "1.1",
+    "provenance": {
+      "tool": "vlm-data-doctor",
+      "version": "0.2.0",
+      "profile": "image-text-sft-v2",
+      "python": "3.12.12",
+      "pillow": "12.3.0",
+      "settings": {
+        "max_pixels": 40000000,
+        "group_key": null
+      },
+      "dataset_sha256": {
+        "train": "0732db8e2351bc22233268e2956bed1f66c75343c27bdc08b80b2a47e12c7f24"
+      },
+      "decoded_image_inventory_sha256": "659e0f34a812d92c04700916083678afe9baf2709adb6d96e8a079d633839acf"
+    },
+    "summary": {
+      "records": {
+        "train": 6
+      },
+      "unique_image_files": 3,
+      "errors": 0,
+      "warnings": 0,
+      "by_code": {}
+    },
+    "issues": []
+  }
+}

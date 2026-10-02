@@ -1,33 +1,37 @@
-# Roadmap
+# Roadmap and acceptance criteria
 
-These are plans, not implemented or benchmarked features. v0.1.0 focuses on a
-small still-image SFT profile and ships without a training or serving framework.
+v0.2.0 is a public preview with a deliberately small still-image SFT profile.
+Items marked complete are implemented, not evidence of field adoption.
 
-## v0.1: useful standalone preflight
+## Available in v0.2
 
-- [x] JSON/JSONL and common ShareGPT/messages input.
-- [x] Conversation, image-marker and image-file checks.
-- [x] In-split duplicates and train/eval exact overlap checks.
-- [x] JSON/Markdown reports, synthetic fixtures, tests and CI.
-- [x] English and Chinese quick starts, limitations and contribution guidance.
+- [x] JSON/JSONL and common ShareGPT/messages conversations.
+- [x] Conversation, image-marker, local image decoding and path checks.
+- [x] Within-split duplicates and exact train/evaluation overlap.
+- [x] Opt-in source/document/topology group-disjoint checks.
+- [x] Offline HTML review, JSON/Markdown/text output and CI exit codes.
+- [x] Input hashes, profile, versions and settings for experiment records.
+- [x] Reproducible synthetic fault corpus and measured CPU timing/RSS.
+- [x] Pinned upstream example check, bilingual documentation and a mapping recipe.
 
-## Next: validate usefulness before broadening scope
+## Next milestone: prove usefulness on real workflows
 
-- [ ] Have at least three independent users try a small dataset; record installation
-  failures, helpful findings and false positives. This is a goal, not adoption evidence.
-- [ ] Add a version-pinned LlamaFactory recipe after actually running a training
-  smoke test; distinguish upstream trainer failures from this validator's failures.
-- [ ] Build a labeled fault corpus; measure per-rule recall and false-positive rate.
-- [ ] Benchmark elapsed time and peak memory on documented CPU/storage hardware.
-- [ ] Add format adapters or configurable rules only when real examples justify them.
+- [ ] Three independent dataset owners complete installation, repair/recheck and
+  report archiving; record failures and time spent. No such adoption is claimed yet.
+- [ ] Build an independently annotated held-out corpus; publish rule-level
+  precision/recall, false alarms, annotator agreement and failure analysis.
+- [ ] Run a version-pinned trainer/tokenizer/model smoke test on appropriate hardware;
+  a static fixture check does not satisfy this criterion.
+- [ ] Profile unique high-resolution images, large finding sets and cold-storage I/O.
+- [ ] Add adapters/rule configuration only for documented user workflows.
 
-## Later
+## Later, if evidence justifies the complexity
 
-- [ ] Perceptual-image and text near-duplicate review with calibrated thresholds.
-- [ ] Group-aware split auditing for documents, topology families and data sources.
-- [ ] Disk-backed hash indexes and bounded reports for large datasets.
-- [ ] Tokenizer-aware length and image-processor checks as explicit optional profiles.
+- [ ] Calibrated perceptual-image and semantic near-duplicate review.
+- [ ] Disk-backed indexes, bounded report output and resumable large-dataset audits.
+- [ ] Optional model-specific tokenizer and image-processor profiles.
+- [ ] Controlled downstream data-quality ablations with raw/repaired data, fixed
+  evaluation sets, multiple seeds and complete training logs.
 
-Training, GPU benchmarking and business-task evaluation belong in dedicated
-experiments. See the [Chinese research note](project-research.zh-CN.md) for how
-these can build on a common data pipeline.
+Expected scientific and operational benefits, and what would actually establish
+them, are specified in [impact.md](impact.md) and [中文说明](impact.zh-CN.md).

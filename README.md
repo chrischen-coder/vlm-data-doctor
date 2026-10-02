@@ -1,22 +1,30 @@
 # VLM Data Doctor
 
+**Catch broken image-text samples before training. Review split overlap. Keep the evidence.**
+
 [![CI](https://github.com/chrischen-coder/vlm-data-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/chrischen-coder/vlm-data-doctor/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3670a0)](pyproject.toml)
+[![MIT](https://img.shields.io/badge/License-MIT-196c57)](LICENSE)
+[![Public preview](https://img.shields.io/badge/Release-v0.2.0%20preview-196c57)](https://github.com/chrischen-coder/vlm-data-doctor/releases/tag/v0.2.0)
 
-**Check image-text fine-tuning data before starting a training job.**
+[简体中文](README.zh-CN.md) · [Quick start](#quick-start) · [Measurements](#measured-evidence) · [Research & industry use](docs/impact.md) · [LlamaFactory recipe](docs/integrations/llamafactory.md)
 
-[简体中文](README.zh-CN.md) · [Supported checks](docs/checks.md) · [Project roadmap](docs/roadmap.md)
+An offline preflight tool for researchers preparing image-text SFT experiments
+and engineers validating data before a training job. Check local images and
+ShareGPT/messages conversations, inspect train/evaluation overlap, and export an
+interactive HTML report plus a JSON reproducibility manifest.
 
-A small, offline CLI for a common ShareGPT / message-based supervised fine-tuning
-profile: local still images, `<image>` markers, and text conversations. It checks
-the dataset, decodes its images, and reviews train/evaluation overlap in one pass.
-No GPU, model download, credentials, or network connection is required to run it.
+**Runs on CPU. No model, API key or runtime network access. Your input stays unchanged.**
 
-**Status: v0.1.0, alpha.** This is a data preflight tool. It does not train models,
-judge answer quality, or certify compatibility with every trainer or model template.
+![Actual report generated from the included broken fixture](docs/assets/report-desktop.png)
 
-## Try it in a minute
+*An actual report, not a mockup. Filter by severity, search findings and inspect
+input hashes. [Download the offline demo](https://github.com/chrischen-coder/vlm-data-doctor/releases/download/v0.2.0/report.html)
+or generate it yourself below. [Mobile view](docs/assets/report-mobile.png).*
 
-Requires Python 3.10+. Install from this repository; no PyPI release is assumed.
+## Quick start
+
+Python 3.10+. Install from the repository; a PyPI release is not provided.
 
 ```bash
 git clone https://github.com/chrischen-coder/vlm-data-doctor.git
@@ -24,7 +32,7 @@ cd vlm-data-doctor
 python -m venv .venv
 ```
 
-Activate the environment with `source .venv/bin/activate` on macOS/Linux or
+Activate with `source .venv/bin/activate` on macOS/Linux or
 `.venv\Scripts\Activate.ps1` in Windows PowerShell, then:
 
 ```bash
@@ -40,33 +48,70 @@ Errors: 0 | Warnings: 0
 No issues found by the supported checks.
 ```
 
-Try the intentionally broken dataset:
+Generate a visual report with deliberately broken data:
 
 ```bash
-vlm-data-doctor check examples/broken/train.jsonl --eval examples/broken/validation.jsonl --image-root examples/clean
+vlm-data-doctor check examples/broken/train.jsonl --eval examples/broken/validation.jsonl --image-root examples/clean --format html --output report.html
 ```
 
-It exits with status **1**, finding a marker mismatch, a missing image, and a
-sample shared by training and evaluation. The image overlap also produces a
-warning. These are synthetic smoke-test fixtures, not a model benchmark.
+Open `report.html` in your browser. This command **intentionally exits 1**: the
+fixture has three errors and one warning. The report is still written. Use a new
+output filename each time; the CLI never overwrites an existing file.
 
-## What it checks
+## What you get
 
-| Area | Checks |
+| Capability | Practical outcome |
 | --- | --- |
-| Input | JSON array / JSONL syntax, empty datasets, object and field types |
-| Conversations | ShareGPT or `messages`, role order, nonempty answers, paired SFT turns |
-| Image alignment | `<image>` count equals image-path count; markers occur in user turns |
-| Image files | Missing/corrupt images, full still-image decoding, size limit, portable paths |
-| Duplicates | Repeated IDs and normalized samples within a split |
-| Evaluation hygiene | Exact sample, input, and image-byte overlap across train/evaluation |
-| Automation | Stable rule codes, JSON/Markdown output, CI-friendly exit status |
+| Schema, roles and image markers | Locate malformed SFT examples by row and field |
+| Image existence, decoding and size checks | Catch missing, corrupt or oversized files before training |
+| Duplicate IDs and normalized samples | Review repetition within a split |
+| Train/eval sample, input and image overlap | Inspect exact overlap before interpreting model metrics |
+| Optional `--group-key document_id` | Enforce a source/document/topology-disjoint split policy |
+| HTML, JSON, Markdown and text reports | Share a review queue or add a CI gate |
+| Dataset and valid-image inventory hashes | Preserve which data, version and settings were checked |
 
-Example record:
+![Where the checker fits in a training workflow](docs/assets/workflow.svg)
+
+## Measured evidence
+
+![Reproducible synthetic regression and CPU measurements](docs/assets/benchmark.png)
+
+| Experiment | Observed result | Scope |
+| --- | --- | --- |
+| Curated fault injections | **128 / 128** annotated target findings detected | 16 supported fault families; designed with knowledge of the rules |
+| Clean controls | **0 / 32** cases with a finding | Four synthetic input profiles; not a field false-positive estimate |
+| 50,000-row CPU audit | **1.87 s median**, **49.5 MiB peak RSS** | Apple M5; 256 reused 256×256 images; three runs after warmup |
+| Pinned LlamaFactory demo | **6 records, 3 images, 0 errors/warnings** | Schema/image smoke check only; no trainer or model execution |
+
+These are software checks, not VLM accuracy, training acceleration or GPU-cost
+results. Runtime excludes process startup and report rendering; the OS cache was
+not flushed. Reused images make this different from auditing all-unique, high-resolution data.
+
+[Methods, limitations and reproduction commands](docs/benchmarks.md) ·
+[Raw cases and timing runs](benchmarks/results/v0.2.0-local.json) ·
+[Upstream fixture evidence](benchmarks/results/llamafactory-fixture.json)
+
+## Research and industry value
+
+**Research:** attach the data profile, hashes, split policy and report to an
+experiment; check source-group separation; make data-quality ablations traceable.
+Use [CITATION.cff](CITATION.cff) to cite the software version. This project has no
+published paper or DOI, and does not claim a new learning algorithm.
+
+**Industry:** put a repeatable data gate after labeling/export and before GPU-job
+submission. Preserve failed reports as repair queues, then recheck. The intended
+benefit is earlier diagnosis; reduced failed jobs or GPU-hours needs a real pilot.
+
+[Expected outcomes and research protocol](docs/impact.md) ·
+[预期效果、论文价值与业界落地](docs/impact.zh-CN.md) ·
+[LlamaFactory integration guide](docs/integrations/llamafactory.md)
+
+## Bring your data
 
 ```json
 {
   "id": "example-1",
+  "document_id": "document-a",
   "messages": [
     {"role": "user", "content": "<image>What color is this square?"},
     {"role": "assistant", "content": "Red."}
@@ -75,90 +120,87 @@ Example record:
 }
 ```
 
-ShareGPT's `conversations` with `from: human/gpt` and `value` is also supported.
-An optional system prompt may appear either in the record's `system` field or as
-the first conversation turn. Text-only records can omit `images`.
-
-Image paths default to the directory of **each dataset file**. Use `--image-root`
-for a common root and `--eval-image-root` for a separate evaluation root.
-Absolute paths, URLs and paths escaping the root are rejected. No input is modified.
-
-## Use with your data and CI
+ShareGPT `conversations` with `from: human/gpt` and `value` is also supported.
+Use at most one initial system turn or a top-level `system` field. Text-only
+records can omit `images`. Image paths are relative to each dataset file unless
+overridden. `--image-root` selects a common root; `--eval-image-root` overrides it
+for evaluation. Only local paths beneath the selected root are accepted.
 
 ```bash
-vlm-data-doctor check data/train.jsonl --eval data/test.jsonl --image-root data --strict --format json
-vlm-data-doctor check data/train.jsonl --format markdown --output report.md
+vlm-data-doctor check data/train.jsonl --eval data/test.jsonl --image-root data --strict --format json --output audit.json
+vlm-data-doctor check data/train.jsonl --eval data/test.jsonl --group-key document_id --format html --output audit.html
 ```
 
-`--output` creates a new file and refuses to overwrite any existing file. Parent
-directories must exist. Without it, the report goes to stdout. Operational errors
-go to stderr. Dataset paths can therefore appear in operational errors, but report
-issues contain only row/field locations, rule codes, and advice, not source texts.
+`--group-key` is opt-in: every record must provide that top-level field as a
+nonempty string or integer; shared groups across splits are errors. Values are
+type-sensitive (`1` and `"1"` differ). No group IDs are echoed in the report.
 
 | Exit | Meaning |
 | --- | --- |
-| `0` | No errors; warnings are allowed unless `--strict` is set |
-| `1` | Dataset errors, or warnings in strict mode |
-| `2` | CLI, I/O, encoding, configuration, or report-writing problem |
+| `0` | No errors; warnings allowed unless `--strict` |
+| `1` | Data errors, or warnings in strict mode; the report is still produced |
+| `2` | CLI, configuration, I/O, encoding or report-writing failure |
 
-For JSONL, row numbers are physical line numbers, starting at 1; blank lines are
-ignored. For JSON arrays, rows are one-based array positions. Row 0 means a
-dataset-level finding. Rule details and severity rationale are in [checks.md](docs/checks.md).
-
-Python API:
+JSONL rows use physical line numbers (blank lines ignored). JSON-array rows are
+one-based positions. Row 0 is a dataset-level finding. Reports contain locations
+and guidance, not original conversations, IDs or image filenames. Operational
+stderr errors may contain local paths. Output parent directories must exist.
 
 ```python
 from vlm_data_doctor import audit
 
-report = audit("data/train.jsonl", evaluation="data/test.jsonl", image_root="data")
+report = audit("data/train.jsonl", evaluation="data/test.jsonl", group_key="document_id")
 print(report.render("json"))
 ```
 
-## Scope and limitations
+[Rule catalog and report contract](docs/checks.md)
 
-- Only text conversations with local still images are supported. Tool calls,
-  preference/RL datasets, video/audio, URLs, and structured image-content blocks
-  need different validation profiles. Arbitrary field remapping is not supported.
-- A file passing these checks may still fail a trainer's tokenizer, image processor,
-  truncation policy, or template. Run a small training smoke test next.
-- SHA-256 compares **image bytes**, so copied/renamed images match but recompressed,
-  cropped, or visually similar images may not. No perceptual or semantic deduplication.
-- Full sample equality uses the ordered conversation plus ordered image hashes.
-  Text is normalized with Unicode NFC, CRLF-to-LF conversion and outer trimming;
-  internal whitespace, role order, and letter case are preserved. IDs are excluded.
-- Image-only overlap is a warning: several legitimate questions may share an image.
-  Identical sample overlap is an error. Choose a split policy appropriate to the task.
-- JSONL is read row by row; JSON arrays, fingerprint indexes and findings are kept
-  in memory. This is not yet a constant-memory, billion-row pipeline. Keep files
-  unchanged while an audit is running because image results are cached by path.
-- The default limit is 40 million pixels per image. `--max-pixels` can change it,
-  but Pillow's own decompression protection still applies. Animated images are rejected.
-- Synthetic fixtures validate software behavior. No GPU savings, model-quality
-  improvement, training result, or community adoption is claimed.
+## Supported scope
 
-## Related tools and motivation
+**v0.2.0 is a public preview.** It supports paired text conversations and local
+still images. It does not support tool calls, preference/RL records, video/audio,
+remote images, structured content blocks or arbitrary field remapping.
 
-[LlamaFactory](https://github.com/hiyouga/LlamaFactory) provides model training and
-documents the image-path / marker contract in its
-[data guide](https://github.com/hiyouga/LlamaFactory/blob/main/data/README.md).
-Historical user reports such as [#6135](https://github.com/hiyouga/LlamaFactory/issues/6135)
-illustrate why early feedback is useful; that issue is closed and is not evidence
-of a current unresolved trainer defect.
+- SHA-256 detects identical **file bytes**, including renamed copies, but not
+  recompressed, cropped or semantically similar images. Image reuse is a warning;
+  identical sample overlap is an error. Select a split policy that matches the task.
+- Full-sample matching combines ordered conversations and image hashes, ignoring
+  IDs. Text uses NFC, CRLF normalization and outer trimming; internal whitespace
+  and case remain significant. Input-only matching excludes assistant turns and
+  is a review heuristic for multi-turn conversations.
+- JSONL streams row by row, while indexes and findings stay in memory. JSON arrays
+  load into memory. HTML includes every finding and can grow large. Use JSON for
+  large result sets. This is not a bounded-memory or billion-row pipeline.
+- The default pixel limit is 40 million. `--max-pixels` can change it, but Pillow's
+  decompression protection remains. Animated images are rejected.
+- The manifest hashes source dataset bytes and the sorted multiset of successfully
+  decoded image-file hashes, not missing/corrupt images. Keep inputs unchanged
+  during the audit. The manifest is evidence, not a complete dataset archive.
+- Passing these checks does not establish label quality, license suitability,
+  absence of private data, tokenizer compatibility or training success. A small
+  real training smoke test is still necessary.
 
-[Data-Juicer](https://github.com/datajuicer/data-juicer) covers much broader data
-processing, cleaning and deduplication, and [Cleanlab](https://github.com/cleanlab/cleanlab)
-addresses data and label quality. Our deliberately small scope is offline SFT
-preflight with row-level reports and split checks. These projects overlap in parts;
-we do not claim to have invented dataset validation or replace their pipelines.
+## Ecosystem and contribution
 
-## Development and contributing
+[LlamaFactory](https://github.com/hiyouga/LlamaFactory) handles training and defines
+the data contract used by this profile. [Data-Juicer](https://github.com/datajuicer/data-juicer)
+covers a much broader data-processing pipeline; [Cleanlab](https://github.com/cleanlab/cleanlab)
+addresses data and label quality. There is overlap. This project's focus is a
+small offline preflight with readable reports and explicit split evidence; no
+comparative superiority or upstream endorsement is claimed.
 
 ```bash
-python -m pip install -e .
+python -m pip install .
 python -m unittest discover -s tests -v
+python -m benchmarks.run --output reports/correctness.json
 ```
 
-Please include a tiny synthetic failing example when proposing a new rule.
-See [CONTRIBUTING.md](CONTRIBUTING.md). Ideas, limitations and next steps are in
-the [roadmap](docs/roadmap.md). MIT licensed; bundled fixtures are generated for this
-project and use the same license. No external datasets or model weights are bundled.
+After editing package code, reinstall before testing, or use `pip install -e .`
+in an environment that supports editable installations. Runtime requires only
+Pillow; chart/browser tools are optional development dependencies.
+
+[Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [Roadmap](docs/roadmap.md) ·
+[What we learned from established projects](docs/reference-projects.zh-CN.md)
+
+MIT licensed. Bundled fixtures are generated for this project under the same
+license; no upstream media, private datasets or model weights are redistributed.

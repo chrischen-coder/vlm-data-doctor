@@ -4,11 +4,13 @@ from collections.abc import Iterator
 import hashlib
 import json
 from pathlib import Path, PureWindowsPath
+import platform
 import unicodedata
 import warnings
 
-from PIL import Image
+from PIL import Image, __version__ as pillow_version
 
+from . import __version__
 from .report import Report
 
 
@@ -25,6 +27,28 @@ def _reject_constant(value: str) -> None:
     raise ValueError(f"Non-standard JSON constant: {value}")
 
 
+def _unique_keys(pairs: list[tuple[str, object]]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate JSON object keys are ambiguous")
+        result[key] = value
+    return result
+
+
+def _file_digest(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _valid_text(text: str) -> bool:
+    # JSON permits escaped unpaired surrogates; UTF-8 tokenizers generally do not.
+    return not any(0xD800 <= ord(character) <= 0xDFFF for character in text)
+
+
 def _read_rows(path: Path, dataset: str, report: Report) -> Iterator[tuple[int, object]]:
     with path.open(encoding="utf-8-sig") as stream:
         if path.suffix.lower() in {".jsonl", ".ndjson"}:
@@ -33,15 +57,15 @@ def _read_rows(path: Path, dataset: str, report: Report) -> Iterator[tuple[int, 
                     continue
                 report.records[dataset] += 1
                 try:
-                    record = json.loads(line, parse_constant=_reject_constant)
+                    record = json.loads(line, parse_constant=_reject_constant, object_pairs_hook=_unique_keys)
                 except ValueError:
                     report.add("error", "invalid_json", dataset, line_number, "record",
-                               "Use one valid JSON object per nonblank line.")
+                               "Use one valid JSON object per nonblank line, without duplicate keys or NaN/Infinity.")
                     continue
                 yield line_number, record
         else:
             try:
-                records = json.load(stream, parse_constant=_reject_constant)
+                records = json.load(stream, parse_constant=_reject_constant, object_pairs_hook=_unique_keys)
             except ValueError:
                 report.add("error", "invalid_json", dataset, 0, "dataset",
                            "Use a valid JSON array, or a .jsonl file for JSON Lines.")
@@ -55,7 +79,7 @@ def _read_rows(path: Path, dataset: str, report: Report) -> Iterator[tuple[int, 
 
 
 class _Auditor:
-    def __init__(self, report: Report, max_pixels: int):
+    def __init__(self, report: Report, max_pixels: int, group_key: str | None):
         self.report = report
         self.max_pixels = max_pixels
         self.image_cache: dict[Path, tuple[str | None, str | None, str]] = {}
@@ -63,6 +87,8 @@ class _Auditor:
         self.inputs: dict[str, dict[str, int]] = {}
         self.images: dict[str, dict[str, int]] = {}
         self.ids: dict[str, dict[str, int]] = {}
+        self.group_key = group_key
+        self.groups: dict[str, dict[str, int]] = {}
 
     def _image(self, path: Path) -> tuple[str | None, str | None, str]:
         if path in self.image_cache:
@@ -90,11 +116,7 @@ class _Auditor:
                 # verify() checks structure; reopening and loading also checks decoding.
                 with Image.open(path) as image:
                     image.load()
-            digest = hashlib.sha256()
-            with path.open("rb") as stream:
-                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-                    digest.update(chunk)
-            result = (digest.hexdigest(), None, "")
+            result = (_file_digest(path), None, "")
         except (Image.DecompressionBombError, Image.DecompressionBombWarning):
             result = (None, "image_too_large", "Resize the image below Pillow's safety limit.")
         except FileNotFoundError:
@@ -114,6 +136,16 @@ class _Auditor:
         if not isinstance(record, dict):
             add("record_schema", "record", "Each record must be a JSON object.")
             return
+        group_first = None
+        if self.group_key is not None:
+            group = record.get(self.group_key)
+            if (isinstance(group, bool) or not isinstance(group, (str, int))
+                    or (isinstance(group, str) and (not group.strip() or not _valid_text(group)))):
+                add("invalid_group", self.group_key, "Each record needs a nonempty string or integer group value.")
+            else:
+                digest = _digest([type(group).__name__, group])
+                group_first = self.groups.get("train", {}).get(digest) if dataset == "eval" else None
+                self.groups.setdefault(dataset, {}).setdefault(digest, row)
         for key in ("videos", "audios"):
             if key in record:
                 add("unsupported_modality", key, "This version supports still images and text only.")
@@ -143,7 +175,7 @@ class _Auditor:
                  if key == "messages" else {"system": "system", "human": "user", "gpt": "assistant"})
         canonical = []
         if "system" in record:
-            if not isinstance(record["system"], str):
+            if not isinstance(record["system"], str) or not _valid_text(record["system"]):
                 add("invalid_content", "system", "The optional top-level system prompt must be text.")
             elif record["system"].strip():
                 canonical.append(("system", _normalize(record["system"])))
@@ -160,6 +192,9 @@ class _Auditor:
             if not isinstance(content, str) or not content.strip():
                 add("invalid_content", field, "Use nonempty text; structured content blocks are unsupported.")
                 continue
+            if not _valid_text(content):
+                add("invalid_content", field, "Replace unpaired Unicode surrogates with valid text.")
+                continue
             canonical.append((roles[role], _normalize(content)))
 
         turns = canonical[1:] if canonical and canonical[0][0] == "system" else canonical
@@ -168,7 +203,7 @@ class _Auditor:
             add("turn_order", key, "Use user/assistant pairs ending in assistant, with at most one initial system turn.")
 
         paths = record.get("images", [])
-        if not isinstance(paths, list) or any(not isinstance(p, str) or not p.strip() for p in paths):
+        if not isinstance(paths, list) or any(not isinstance(p, str) or not p.strip() or not _valid_text(p) for p in paths):
             add("images_schema", "images", "Provide a list of nonempty local relative image paths.")
             return
         image_tokens = sum(text.count("<image>") for _, text in canonical)
@@ -212,7 +247,11 @@ class _Auditor:
             seen_images.setdefault(digest, row)
 
         # Invalid or partially checked records cannot establish a sample fingerprint.
-        if any(issue.severity == "error" for issue in report.issues[issues_before:]):
+        invalid = any(issue.severity == "error" for issue in report.issues[issues_before:])
+        if group_first is not None:
+            add("split_group_overlap", self.group_key,
+                f"The selected group also appears at train:{group_first}; use a group-disjoint split.")
+        if invalid:
             return
         fingerprint = _digest([canonical, image_hashes])
         input_fingerprint = _digest([[turn for turn in canonical if turn[0] != "assistant"], image_hashes])
@@ -234,7 +273,8 @@ class _Auditor:
 def audit(train: str | Path, *, evaluation: str | Path | None = None,
           image_root: str | Path | None = None,
           eval_image_root: str | Path | None = None,
-          max_pixels: int = 40_000_000) -> Report:
+          max_pixels: int = 40_000_000,
+          group_key: str | None = None) -> Report:
     """Audit datasets. I/O/encoding/configuration errors propagate to the caller.
 
     JSONL streams row-by-row; JSON arrays are loaded in memory. Fingerprints and
@@ -245,8 +285,16 @@ def audit(train: str | Path, *, evaluation: str | Path | None = None,
         raise ValueError("max_pixels must be a positive integer")
     if eval_image_root is not None and evaluation is None:
         raise ValueError("eval_image_root requires an evaluation dataset")
+    if group_key is not None and (not isinstance(group_key, str) or not group_key.strip()):
+        raise ValueError("group_key must be a nonempty top-level field name")
     report = Report()
-    checker = _Auditor(report, max_pixels)
+    report.provenance = {
+        "tool": "vlm-data-doctor", "version": __version__, "profile": "image-text-sft-v2",
+        "python": platform.python_version(), "pillow": pillow_version,
+        "settings": {"max_pixels": max_pixels, "group_key": group_key},
+        "dataset_sha256": {},
+    }
+    checker = _Auditor(report, max_pixels, group_key)
     datasets = [("train", Path(train))]
     if evaluation is not None:
         datasets.append(("eval", Path(evaluation)))
@@ -256,9 +304,12 @@ def audit(train: str | Path, *, evaluation: str | Path | None = None,
         if not root.is_dir():
             raise ValueError(f"{label} image root must be an existing directory")
         report.records[label] = 0
+        report.provenance["dataset_sha256"][label] = _file_digest(path)
         for row, record in _read_rows(path, label, report):
             checker.check(record, label, row, root)
         if report.records[label] == 0 and not any(i.dataset == label for i in report.issues):
             report.add("error", "empty_dataset", label, 0, "dataset", "Provide at least one training/evaluation record.")
     report.unique_image_files = sum(result[0] is not None for result in checker.image_cache.values())
+    report.provenance["decoded_image_inventory_sha256"] = _digest(sorted(
+        result[0] for result in checker.image_cache.values() if result[0] is not None))
     return report

@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, cite the version and repository. This is a software citation, not a published paper."
+title: "VLM Data Doctor: Offline preflight checks for image-text SFT datasets"
+type: software
+authors:
+  - name: "chrischen-coder"
+repository-code: "https://github.com/chrischen-coder/vlm-data-doctor"
+url: "https://github.com/chrischen-coder/vlm-data-doctor"
+version: 0.2.0
+date-released: 2026-10-02
+license: MIT
+keywords:
+  - multimodal
+  - dataset validation
+  - reproducibility
+  - fine-tuning
