@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="240" viewBox="0 0 1200 240" role="img" aria-label="Local data goes through preflight checks, evidence review, then training smoke test">
+<rect width="1200" height="240" rx="18" fill="#f4f7f3"/>
+<g font-family="Arial,sans-serif"><text x="34" y="42" font-size="13" letter-spacing="2" fill="#536d61">WHERE VLM DATA DOCTOR FITS</text>
+<g fill="white" stroke="#d3dfd7"><rect x="34" y="70" width="245" height="116" rx="12"/><rect x="329" y="70" width="245" height="116" rx="12"/><rect x="624" y="70" width="245" height="116" rx="12"/><rect x="919" y="70" width="247" height="116" rx="12"/></g>
+<g font-size="19" font-weight="bold" fill="#193e31"><text x="55" y="108">01 / Local data</text><text x="350" y="108">02 / Preflight</text><text x="645" y="108">03 / Evidence</text><text x="940" y="108">04 / Training</text></g>
+<g font-size="13" fill="#536d61"><text x="55" y="138">JSON / JSONL + still images</text><text x="55" y="160">Train and evaluation splits</text><text x="350" y="138">Schema · images · overlap</text><text x="350" y="160">Optional source-group policy</text><text x="645" y="138">HTML review + JSON manifest</text><text x="645" y="160">Row locations + input hashes</text><text x="940" y="138">Fix / review → smoke test</text><text x="940" y="160">Tokenizer and model checks</text></g>
+<g fill="#729682" font-size="27"><text x="289" y="139">→</text><text x="584" y="139">→</text><text x="879" y="139">→</text></g>
+<text x="34" y="218" font-size="12" fill="#536d61">Offline and read-only. Training still needs its own validation.</text></g></svg>

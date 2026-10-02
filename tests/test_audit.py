@@ -275,7 +275,7 @@ class AuditTests(unittest.TestCase):
         report = self.run_audit([sample(answer="private response", image="missing.png")])
         result = report.render("json")
         self.assertNotIn("private response", result)
-        self.assertEqual(json.loads(result)["schema_version"], "1.0")
+        self.assertEqual(json.loads(result)["schema_version"], "1.1")
 
     def test_markdown_report(self):
         report = self.run_audit([sample(image="missing.png")])

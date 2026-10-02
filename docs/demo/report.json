@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.1",
+  "provenance": {
+    "tool": "vlm-data-doctor",
+    "version": "0.2.0",
+    "profile": "image-text-sft-v2",
+    "python": "3.12.12",
+    "pillow": "12.3.0",
+    "settings": {
+      "max_pixels": 40000000,
+      "group_key": null
+    },
+    "dataset_sha256": {
+      "train": "59927f7c7f75f8275b3179cba5476dcca0d5a56916f19511b4a0d6f56df464d9",
+      "eval": "5393e4e402c0a36f54fa0114d78f3eda714ac9712bda9e9aacd12e217f0c3ca4"
+    },
+    "decoded_image_inventory_sha256": "86b44209ff53766beb14ffa63f41df2929ec2225e4e3580cef52935b98573bec"
+  },
+  "summary": {
+    "records": {
+      "train": 3,
+      "eval": 1
+    },
+    "unique_image_files": 1,
+    "errors": 3,
+    "warnings": 1,
+    "by_code": {
+      "image_token_mismatch": 1,
+      "missing_image": 1,
+      "split_image_overlap": 1,
+      "split_sample_overlap": 1
+    }
+  },
+  "issues": [
+    {
+      "severity": "error",
+      "code": "image_token_mismatch",
+      "dataset": "train",
+      "row": 1,
+      "field": "images",
+      "message": "Found 0 <image> markers and 1 image paths; align them."
+    },
+    {
+      "severity": "error",
+      "code": "missing_image",
+      "dataset": "train",
+      "row": 2,
+      "field": "images[0]",
+      "message": "Reference an existing regular image file beneath the image root."
+    },
+    {
+      "severity": "warning",
+      "code": "split_image_overlap",
+      "dataset": "eval",
+      "row": 1,
+      "field": "images",
+      "message": "Identical image bytes appear at train:1; review the split policy."
+    },
+    {
+      "severity": "error",
+      "code": "split_sample_overlap",
+      "dataset": "eval",
+      "row": 1,
+      "field": "record",
+      "message": "Same sample as train:3; remove overlap before evaluating."
+    }
+  ]
+}

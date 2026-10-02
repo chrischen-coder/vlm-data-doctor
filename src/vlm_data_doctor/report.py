@@ -20,6 +20,7 @@ class Report:
     records: dict[str, int] = field(default_factory=dict)
     issues: list[Issue] = field(default_factory=list)
     unique_image_files: int = 0
+    provenance: dict = field(default_factory=dict)
 
     def add(self, severity: str, code: str, dataset: str, row: int,
             field: str, message: str) -> None:
@@ -35,7 +36,8 @@ class Report:
 
     def to_dict(self) -> dict:
         return {
-            "schema_version": "1.0",
+            "schema_version": "1.1",
+            "provenance": self.provenance,
             "summary": {
                 "records": self.records,
                 "unique_image_files": self.unique_image_files,
@@ -47,6 +49,11 @@ class Report:
         }
 
     def render(self, output_format: str = "text") -> str:
+        if output_format == "html":
+            from .html_report import render_html
+            return render_html(self)
+        if output_format not in {"text", "json", "markdown"}:
+            raise ValueError(f"Unsupported report format: {output_format}")
         if output_format == "json":
             return json.dumps(self.to_dict(), ensure_ascii=False, indent=2)
         counts = ", ".join(f"{k}={v}" for k, v in self.records.items())

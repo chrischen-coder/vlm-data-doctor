@@ -25,14 +25,15 @@ def main(argv: list[str] | None = None) -> int:
     check.add_argument("--image-root", type=Path, help="Common image root; defaults to each dataset's directory")
     check.add_argument("--eval-image-root", type=Path, help="Override the evaluation image root")
     check.add_argument("--max-pixels", type=_positive_int, default=40_000_000)
-    check.add_argument("--format", choices=["text", "json", "markdown"], default="text")
+    check.add_argument("--group-key", help="Require a top-level group field and disjoint groups across splits")
+    check.add_argument("--format", choices=["text", "json", "markdown", "html"], default="text")
     check.add_argument("--output", type=Path, help="Write a new report file (never overwrite an existing file)")
     check.add_argument("--strict", action="store_true", help="Fail on warnings as well as errors")
     args = parser.parse_args(argv)
     try:
         report = audit(args.train, evaluation=args.evaluation,
                        image_root=args.image_root, eval_image_root=args.eval_image_root,
-                       max_pixels=args.max_pixels)
+                       max_pixels=args.max_pixels, group_key=args.group_key)
         rendered = report.render(args.format) + "\n"
         if args.output:
             # Exclusive creation prevents accidental replacement of inputs or reports.

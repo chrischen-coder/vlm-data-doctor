@@ -1,0 +1,1658 @@
+{
+  "schema_version": "1.0",
+  "date_utc": "2026-10-02T07:58:59.024367+00:00",
+  "environment": {
+    "os": "Darwin",
+    "os_release": "25.6.0",
+    "architecture": "arm64",
+    "cpu": "Apple M5",
+    "python": "3.12.12",
+    "pillow": "12.3.0",
+    "tool_version": "0.2.0"
+  },
+  "correctness": {
+    "method": "Curated synthetic fault injections, not an independently held-out field dataset.",
+    "scoring": "Faults pass when their annotated target rule appears; clean controls fail on any finding. Secondary findings are not scored as precision.",
+    "fault_cases": 128,
+    "target_findings_detected": 128,
+    "clean_cases": 32,
+    "clean_false_alarms": 0,
+    "per_family": {
+      "marker_count": {
+        "passed": 8,
+        "cases": 8
+      },
+      "missing_file": {
+        "passed": 8,
+        "cases": 8
+      },
+      "corrupt_file": {
+        "passed": 8,
+        "cases": 8
+      },
+      "blank_answer": {
+        "passed": 8,
+        "cases": 8
+      },
+      "role_type": {
+        "passed": 8,
+        "cases": 8
+      },
+      "unfinished_turn": {
+        "passed": 8,
+        "cases": 8
+      },
+      "image_list_type": {
+        "passed": 8,
+        "cases": 8
+      },
+      "duplicate_sample": {
+        "passed": 8,
+        "cases": 8
+      },
+      "duplicate_id": {
+        "passed": 8,
+        "cases": 8
+      },
+      "sample_leak": {
+        "passed": 8,
+        "cases": 8
+      },
+      "input_leak": {
+        "passed": 8,
+        "cases": 8
+      },
+      "image_leak": {
+        "passed": 8,
+        "cases": 8
+      },
+      "group_leak": {
+        "passed": 8,
+        "cases": 8
+      },
+      "bad_json": {
+        "passed": 8,
+        "cases": 8
+      },
+      "duplicate_json_key": {
+        "passed": 8,
+        "cases": 8
+      },
+      "path_escape": {
+        "passed": 8,
+        "cases": 8
+      },
+      "clean_messages": {
+        "passed": 8,
+        "cases": 8
+      },
+      "clean_sharegpt": {
+        "passed": 8,
+        "cases": 8
+      },
+      "clean_text_only": {
+        "passed": 8,
+        "cases": 8
+      },
+      "clean_disjoint_groups": {
+        "passed": 8,
+        "cases": 8
+      }
+    },
+    "cases": [
+      {
+        "case": "marker_count-0",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "marker_count-1",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "marker_count-2",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "marker_count-3",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "marker_count-4",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "marker_count-5",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "marker_count-6",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "marker_count-7",
+        "family": "marker_count",
+        "expected_code": "image_token_mismatch",
+        "observed_codes": [
+          "image_token_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-0",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-1",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-2",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-3",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-4",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-5",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-6",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "missing_file-7",
+        "family": "missing_file",
+        "expected_code": "missing_image",
+        "observed_codes": [
+          "missing_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-0",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-1",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-2",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-3",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-4",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-5",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-6",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "corrupt_file-7",
+        "family": "corrupt_file",
+        "expected_code": "unreadable_image",
+        "observed_codes": [
+          "unreadable_image"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-0",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-1",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-2",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-3",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-4",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-5",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-6",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "blank_answer-7",
+        "family": "blank_answer",
+        "expected_code": "invalid_content",
+        "observed_codes": [
+          "invalid_content",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-0",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-1",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-2",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-3",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-4",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-5",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-6",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "role_type-7",
+        "family": "role_type",
+        "expected_code": "invalid_role",
+        "observed_codes": [
+          "image_token_mismatch",
+          "invalid_role",
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-0",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-1",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-2",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-3",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-4",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-5",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-6",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "unfinished_turn-7",
+        "family": "unfinished_turn",
+        "expected_code": "turn_order",
+        "observed_codes": [
+          "turn_order"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-0",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-1",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-2",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-3",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-4",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-5",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-6",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_list_type-7",
+        "family": "image_list_type",
+        "expected_code": "images_schema",
+        "observed_codes": [
+          "images_schema"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-0",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-1",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-2",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-3",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-4",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-5",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-6",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_sample-7",
+        "family": "duplicate_sample",
+        "expected_code": "duplicate_sample",
+        "observed_codes": [
+          "duplicate_sample"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-0",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-1",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-2",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-3",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-4",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-5",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-6",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_id-7",
+        "family": "duplicate_id",
+        "expected_code": "duplicate_id",
+        "observed_codes": [
+          "duplicate_id"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-0",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-1",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-2",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-3",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-4",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-5",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-6",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "sample_leak-7",
+        "family": "sample_leak",
+        "expected_code": "split_sample_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_sample_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-0",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-1",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-2",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-3",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-4",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-5",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-6",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "input_leak-7",
+        "family": "input_leak",
+        "expected_code": "split_input_overlap",
+        "observed_codes": [
+          "split_image_overlap",
+          "split_input_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-0",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-1",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-2",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-3",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-4",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-5",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-6",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "image_leak-7",
+        "family": "image_leak",
+        "expected_code": "split_image_overlap",
+        "observed_codes": [
+          "split_image_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-0",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-1",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-2",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-3",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-4",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-5",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-6",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "group_leak-7",
+        "family": "group_leak",
+        "expected_code": "split_group_overlap",
+        "observed_codes": [
+          "split_group_overlap"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-0",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-1",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-2",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-3",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-4",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-5",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-6",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "bad_json-7",
+        "family": "bad_json",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-0",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-1",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-2",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-3",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-4",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-5",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-6",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "duplicate_json_key-7",
+        "family": "duplicate_json_key",
+        "expected_code": "invalid_json",
+        "observed_codes": [
+          "invalid_json"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-0",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-1",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-2",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-3",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-4",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-5",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-6",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "path_escape-7",
+        "family": "path_escape",
+        "expected_code": "image_path",
+        "observed_codes": [
+          "image_path"
+        ],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-0",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-1",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-2",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-3",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-4",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-5",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-6",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-messages-7",
+        "family": "clean_messages",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-0",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-1",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-2",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-3",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-4",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-5",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-6",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-sharegpt-7",
+        "family": "clean_sharegpt",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-0",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-1",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-2",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-3",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-4",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-5",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-6",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-text_only-7",
+        "family": "clean_text_only",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-0",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-1",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-2",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-3",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-4",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-5",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-6",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      },
+      {
+        "case": "clean-disjoint_groups-7",
+        "family": "clean_disjoint_groups",
+        "expected_code": null,
+        "observed_codes": [],
+        "passed": true
+      }
+    ]
+  },
+  "performance": {
+    "seed": 20261002,
+    "unique_images": 256,
+    "image_dimensions": [
+      256,
+      256
+    ],
+    "image_bytes": 50463493,
+    "repeats": 3,
+    "runs": [
+      {
+        "records": 1000,
+        "dataset_bytes": 199230,
+        "median_seconds": 0.17244491598103195,
+        "records_per_second": 5798.953215355997,
+        "max_peak_rss_mib": 27.40625,
+        "warmup": {
+          "seconds": 0.1672587919747457,
+          "peak_rss_mib": 27.015625,
+          "records": 1000,
+          "images": 256,
+          "errors": 0,
+          "warnings": 0
+        },
+        "measurements": [
+          {
+            "seconds": 0.1822250409750268,
+            "peak_rss_mib": 27.15625,
+            "records": 1000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          },
+          {
+            "seconds": 0.17244491598103195,
+            "peak_rss_mib": 27.40625,
+            "records": 1000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          },
+          {
+            "seconds": 0.1645610419800505,
+            "peak_rss_mib": 26.890625,
+            "records": 1000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      },
+      {
+        "records": 10000,
+        "dataset_bytes": 2022354,
+        "median_seconds": 0.4750319580780342,
+        "records_per_second": 21051.215249727018,
+        "max_peak_rss_mib": 31.25,
+        "warmup": {
+          "seconds": 0.48035466601140797,
+          "peak_rss_mib": 31.109375,
+          "records": 10000,
+          "images": 256,
+          "errors": 0,
+          "warnings": 0
+        },
+        "measurements": [
+          {
+            "seconds": 0.5343627920374274,
+            "peak_rss_mib": 31.125,
+            "records": 10000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          },
+          {
+            "seconds": 0.4750319580780342,
+            "peak_rss_mib": 31.03125,
+            "records": 10000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          },
+          {
+            "seconds": 0.47502050001639873,
+            "peak_rss_mib": 31.25,
+            "records": 10000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      },
+      {
+        "records": 50000,
+        "dataset_bytes": 10245130,
+        "median_seconds": 1.867315666982904,
+        "records_per_second": 26776.404699044262,
+        "max_peak_rss_mib": 49.546875,
+        "warmup": {
+          "seconds": 1.8695698750671,
+          "peak_rss_mib": 49.359375,
+          "records": 50000,
+          "images": 256,
+          "errors": 0,
+          "warnings": 0
+        },
+        "measurements": [
+          {
+            "seconds": 1.870826083002612,
+            "peak_rss_mib": 49.546875,
+            "records": 50000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          },
+          {
+            "seconds": 1.865752000012435,
+            "peak_rss_mib": 49.328125,
+            "records": 50000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          },
+          {
+            "seconds": 1.867315666982904,
+            "peak_rss_mib": 49.421875,
+            "records": 50000,
+            "images": 256,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    ],
+    "method": "Fresh process per run; first run discarded as warmup. Timer surrounds audit() only; process startup and report rendering are excluded. RSS includes interpreter and imports. OS cache is not flushed.",
+    "scope": "Synthetic JSONL with a reused image pool. Does not represent all-unique high-resolution images, remote storage, model preprocessing or GPU training."
+  }
+}

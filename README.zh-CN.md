@@ -1,19 +1,28 @@
 # VLM Data Doctor
 
-**在启动多模态训练前，检查图文数据是否存在明显问题。**
+**训练之前发现图文数据问题，检查集合重叠，保存可复现证据。**
 
-[English](README.md) · [规则说明](docs/checks.md) · [选题调研与后续路线](docs/project-research.zh-CN.md)
+[![CI](https://github.com/chrischen-coder/vlm-data-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/chrischen-coder/vlm-data-doctor/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3670a0)](pyproject.toml)
+[![MIT](https://img.shields.io/badge/License-MIT-196c57)](LICENSE)
+[![公开预览](https://img.shields.io/badge/Release-v0.2.0%20preview-196c57)](https://github.com/chrischen-coder/vlm-data-doctor/releases/tag/v0.2.0)
 
-这是一个在本地运行的小型 Python 工具，支持常见的 ShareGPT / messages 图文 SFT
-数据格式。它检查对话结构、图片占位符、图片文件、重复样本和训练／评测集重叠。
-运行时不需要 GPU、模型、API Key 或网络连接，也不会修改原始数据。
+[English](README.md) · [快速开始](#快速开始) · [实测结果](#实测结果) · [论文与业界价值](docs/impact.zh-CN.md) · [LlamaFactory 接入](docs/integrations/llamafactory.md)
 
-当前版本为 **v0.1.0，Alpha**。数据检查通过不等于模型训练、答案质量或评测方法一定正确。
-目前没有模型训练结果或节省 GPU 费用的实测结论。
+面向准备图文 SFT 数据的研究者和算法工程师：检查 ShareGPT/messages 对话、本地图片、
+重复样本与训练／评测集重叠，输出可筛选的 HTML 报告和包含输入哈希的 JSON 记录。
+
+**CPU 即可运行，不加载模型、不需要 API Key，检查过程离线，不修改原始数据。**
+
+![从实际故障样例生成的可视化报告](docs/assets/report-desktop.png)
+
+*实际运行截图，支持按严重程度筛选、搜索规则与位置、查看复现信息。
+[下载离线演示报告](https://github.com/chrischen-coder/vlm-data-doctor/releases/download/v0.2.0/report.html)
+或用下面的命令生成。[手机端效果](docs/assets/report-mobile.png)。*
 
 ## 快速开始
 
-需要 Python 3.10 或更新版本。本项目尚未宣称发布至 PyPI，请从仓库安装。
+需要 Python 3.10+。请从仓库安装，目前未发布到 PyPI。
 
 ```bash
 git clone https://github.com/chrischen-coder/vlm-data-doctor.git
@@ -22,70 +31,132 @@ python -m venv .venv
 ```
 
 macOS/Linux 执行 `source .venv/bin/activate`，Windows PowerShell 执行
-`.venv\Scripts\Activate.ps1`，然后运行：
+`.venv\Scripts\Activate.ps1`，然后：
 
 ```bash
 python -m pip install .
 vlm-data-doctor check examples/clean/train.jsonl --eval examples/clean/validation.jsonl --strict
 ```
 
-预期结果：2 条训练样本、1 条评测样本、3 个图片文件，0 个错误、0 个警告。
+预期输出：2 条训练样本、1 条评测样本、3 个图片文件，0 错误、0 警告。
 
-体验故意设置的问题：
+生成故障样例的效果报告：
 
 ```bash
-vlm-data-doctor check examples/broken/train.jsonl --eval examples/broken/validation.jsonl --image-root examples/clean
+vlm-data-doctor check examples/broken/train.jsonl --eval examples/broken/validation.jsonl --image-root examples/clean --format html --output report.html
 ```
 
-预期发现占位符数量不匹配、图片缺失和跨集合相同样本，返回退出码 1。
-样例仅用于验证工具，不代表真实业务数据，也不是模型准确率基准。
+用浏览器打开 `report.html`。这个命令**故意返回退出码 1**：样例中有 3 个错误和 1 个警告，
+报告仍会写出。每次请使用新的输出文件名，工具不会覆盖已有文件。
 
-## 可以检查什么
+## 可以帮助你完成什么
 
-| 检查项 | 用途 |
+| 能力 | 具体产出 |
 | --- | --- |
-| JSON/JSONL、字段类型 | 提前发现无法解析的数据 |
-| human/gpt 或 user/assistant 对话 | 检查成对 SFT 对话、角色顺序和空答案 |
-| `<image>` 与 images 数量 | 发现常见的图文对齐错误 |
-| 图片存在性、解码、大小限制 | 发现缺失、损坏和超限图片 |
-| 重复 ID、相同样本 | 提醒检查重复数据 |
-| 训练／评测集交叉检查 | 发现完全相同的样本、相同输入和相同图片字节 |
-| JSON、Markdown 报告和退出码 | 接入数据准备流程或 CI |
+| JSON、角色、对话顺序和图片占位符校验 | 定位到行与字段的修复建议 |
+| 图片存在性、完整解码、大小限制 | 提前发现缺图、坏图和超限图片 |
+| 重复 ID 与样本检查 | 集合内部重复数据的复核线索 |
+| 跨集合样本、输入和图片检查 | 解释评测结果之前的重叠证据 |
+| `--group-key document_id` | 检查文档／来源／拓扑组是否跨集合重复 |
+| HTML、JSON、Markdown、文本输出 | 可视化检查报告或 CI 门禁 |
+| 数据哈希、版本、检查配置 | 可随实验归档的数据检查记录 |
 
-`images` 使用相对于数据文件目录的路径；可以通过 `--image-root` 指定公共目录，
-或通过 `--eval-image-root` 单独指定评测图片目录。拒绝绝对路径、URL 和越出根目录的路径。
+![数据预检在训练流程中的位置](docs/assets/workflow.svg)
 
-```bash
-vlm-data-doctor check data/train.jsonl --eval data/test.jsonl --image-root data --strict --format json
-vlm-data-doctor check data/train.jsonl --format markdown --output report.md
+## 实测结果
+
+![从原始测量 JSON 生成的检测与性能图](docs/assets/benchmark.png)
+
+| 实验 | 结果 | 解释范围 |
+| --- | --- | --- |
+| 合成故障注入 | **128 / 128** 目标规则命中 | 16 类已支持故障；样例基于已知规则构造 |
+| 正常对照 | **0 / 32** 样例出现告警 | 4 类合成格式；不等于真实业务误报率为零 |
+| 5 万行 CPU 检查 | 中位耗时 **1.87 秒**，峰值 RSS **49.5 MiB** | Apple M5；复用 256 张 256×256 图片；预热后测量 3 次 |
+| 固定版本 LlamaFactory 示例 | **6 条记录、3 张图片，0 错误／警告** | 格式和解码验证，没有运行模型或训练器 |
+
+这些是软件检查结果，不是模型准确率或 GPU 加速成果。计时不含进程启动和报告渲染；
+没有清空操作系统缓存。复用图片的工作负载不能代表 5 万张独立高分辨率图片。
+
+[完整测量方法与限制](docs/benchmarks.md) · [原始样例与计时记录](benchmarks/results/v0.2.0-local.json) ·
+[上游示例检查记录](benchmarks/results/llamafactory-fixture.json)
+
+## 对论文和业界落地的帮助
+
+**研究工作：**把规则、输入哈希、数据拆分政策与报告写入实验记录或附录；检查按来源分组的
+拆分是否交叉；为数据质量消融保留证据。可以通过 [CITATION.cff](CITATION.cff) 引用软件版本。
+本项目没有已发表论文或 DOI，当前不宣称新训练算法。
+
+**实际训练流程：**在标注／导出之后、提交 GPU 任务之前运行预检；失败报告作为修复清单，
+修复后重跑，通过后再提交任务。预期帮助是把问题诊断提前，减少训练失败和节省 GPU 小时
+的效果需要真实试点测量。
+
+[预期效果、论文研究方案与落地验收](docs/impact.zh-CN.md) · [LlamaFactory 接入示例](docs/integrations/llamafactory.md)
+
+## 接入自己的数据
+
+```json
+{
+  "id": "example-1",
+  "document_id": "document-a",
+  "messages": [
+    {"role": "user", "content": "<image>这个方块是什么颜色？"},
+    {"role": "assistant", "content": "红色。"}
+  ],
+  "images": ["images/red.png"]
+}
 ```
 
-`--output` 只创建新报告，已有文件不会被覆盖。父目录必须已存在。
-退出码：0 = 通过，1 = 存在数据错误（严格模式也包含警告），2 = 参数、文件读写或编码问题。
-JSONL 行号是文件的实际行号；JSON 数组行号是从 1 开始的元素位置。
+也支持 ShareGPT 的 `conversations`、`from: human/gpt`、`value` 字段。可使用一个初始 system
+轮次或顶层 `system` 文本；纯文本样例可以省略 `images`。
 
-## 边界
+图片路径默认相对于各数据文件的目录。`--image-root` 指定公共根目录，
+`--eval-image-root` 可单独覆盖评测图片目录。仅支持根目录内的本地相对路径。
 
-目前仅支持本地静态图片和文本对话，不支持视频、音频、工具调用、DPO/RL、URL 图片、
-结构化 content 数组或任意字段映射。还需单独验证模型模板、tokenizer、截断和真实训练行为。
+```bash
+vlm-data-doctor check data/train.jsonl --eval data/test.jsonl --image-root data --strict --format json --output audit.json
+vlm-data-doctor check data/train.jsonl --eval data/test.jsonl --group-key document_id --format html --output audit.html
+```
 
-图片通过 SHA-256 字节哈希比较，改文件名不会绕过检查，但重新压缩和裁剪可能绕过。
-相同图片出现在不同集合只给警告，因为不同任务的拆分要求不同；完整样本重叠则报错。
-相同样本比较保留角色顺序、大小写和内部空格，只做 NFC、换行和首尾空白规范化。
+启用 `--group-key` 后，每条记录都必须包含该顶层字段，值是非空字符串或整数；
+训练与评测共享组会报错。组值区分类型，整数 `1` 和字符串 `"1"` 不同。报告不展示组 ID。
 
-JSONL 逐行读取，但哈希索引和问题列表仍占内存；JSON 数组会整体读入。
-默认图片上限为 4000 万像素，动画图片不支持。详见 [完整说明](README.md#scope-and-limitations)。
+退出码：0 = 通过；1 = 数据错误（严格模式也包含警告）；2 = 参数、配置、读写或编码问题。
+`--output` 的父目录必须存在，文件必须尚不存在。退出码 1 时报告仍会生成。
+JSONL 行号为实际行号，JSON 数组为从 1 开始的位置，0 表示文件级问题。
 
-## 为什么做这个项目
+## 当前边界
 
-[LlamaFactory 数据文档](https://github.com/hiyouga/LlamaFactory/blob/main/data/README.md)
-明确要求图片数量与占位符数量对应。历史问题
-[#6135](https://github.com/hiyouga/LlamaFactory/issues/6135) 展示了这类数据问题；该问题已关闭，
-这里不将它描述为当前未解决的框架缺陷。
+**v0.2.0 是公开预览版本。** 支持本地静态图片与成对文本 SFT 对话，暂不支持工具调用、
+DPO/RL、视频／音频、远程图片、结构化 content 块及任意字段映射。
 
-[Data-Juicer](https://github.com/datajuicer/data-juicer) 已有广泛的数据处理、清洗和去重能力。
-本工具选择小范围切入：易安装、本地预检、逐行定位和拆分交叉检查。这是产品范围选择，
-不宣称功能独占、算法创新或替代现有框架。
+- 精确字节哈希能识别改名后的相同图片，不能可靠识别重新压缩、裁剪或语义近似的图片。
+- 相同图片跨集合出现给警告；完整样本重叠报错。拆分方式必须与具体研究任务一致。
+- JSONL 逐行读取，但索引和告警保存在内存；JSON 数组整体读取。HTML 包含全部告警，
+  很大的结果集建议用 JSON。这不是常量内存或十亿行处理系统。
+- 默认图片上限为 4000 万像素。可配置上限，但 Pillow 的解压保护仍生效；动画图片不支持。
+- 清单只记录成功解码图片的哈希，不包含缺失／损坏图片的字节证明；检查期间应保持文件不变。
+- 检查通过不代表标签正确、没有隐私数据、许可证满足用途、tokenizer 兼容或训练成功。
+  仍需真实训练 smoke test。
 
-欢迎使用人工构造的最小样例反馈问题。请勿提交企业内部文档、客户日志或凭证。
-代码和本项目生成的演示数据使用 MIT 许可证。
+完整规则、样本规范化与报告字段见[规则说明](docs/checks.md)和 [English README](README.md#supported-scope)。
+
+## 生态与贡献
+
+训练复用 [LlamaFactory](https://github.com/hiyouga/LlamaFactory) 等框架；
+[Data-Juicer](https://github.com/datajuicer/data-juicer) 覆盖更广泛的数据处理，
+[Cleanlab](https://github.com/cleanlab/cleanlab) 提供数据与标签质量能力。
+本项目与它们存在功能重叠，选择聚焦轻量、离线、可定位的训练前检查，不宣称性能领先或上游背书。
+
+```bash
+python -m pip install .
+python -m unittest discover -s tests -v
+python -m benchmarks.run --output reports/correctness.json
+```
+
+修改包代码后请重新安装再测试，或在支持 editable install 的环境中用 `pip install -e .`。
+运行依赖只有 Pillow；绘图与截图工具是可选开发依赖。
+
+[贡献指南](CONTRIBUTING.md) · [版本变化](CHANGELOG.md) · [路线图](docs/roadmap.md) ·
+[对成熟项目的调研与借鉴](docs/reference-projects.zh-CN.md)
+
+代码和自行生成的示例数据使用 MIT 许可证。仓库不分发上游图片、内部业务数据或模型权重。
