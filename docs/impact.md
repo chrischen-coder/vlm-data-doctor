@@ -1,96 +1,88 @@
-# Expected outcomes, research use and deployment
+# Problems this checker addresses
 
-The useful outcome is **earlier, traceable feedback on data**, before a model or
-distributed job consumes the dataset. This is a data-quality engineering tool;
-it is not a new learning algorithm or a published research paper.
+These are reproducible workflows for local still-image SFT data, not customer case studies.
 
-## Outcomes and acceptance evidence
+## 1. The annotation export succeeds, but records are broken
 
-| Outcome | Current evidence | What remains to establish |
+Merging annotation batches or moving image folders can leave valid JSON pointing
+to missing files, corrupt images or a different number of images than `<image>`
+markers. You need the affected record, not just a preprocessing failure.
+
+The checker decodes images and locates structural findings by row and field.
+Actual output from the broken fixture includes:
+
+```text
+ERROR image_token_mismatch train:1 images: Found 0 <image> markers and 1 image paths; align them.
+ERROR missing_image train:2 images[0]: Reference an existing regular image file beneath the image root.
+```
+
+Restore the files or correct the markers, then recheck. If the record should be
+text-only, remove the erroneous image reference rather than adding a marker blindly.
+
+```bash
+vlm-data-doctor check examples/broken/train.jsonl --eval examples/broken/validation.jsonl --image-root examples/clean
+```
+
+The command exits `1`; its full output also contains two split-overlap findings.
+[LlamaFactory issue #6135](https://github.com/hiyouga/LlamaFactory/issues/6135)
+records a historical marker-count error. It is closed; this is evidence of a
+failure mode, not a claim about an unresolved upstream bug.
+
+## 2. Unique records still share a source document
+
+Document QA can produce multiple page images and questions from one PDF. Splitting
+rows at random can put different pages of that PDF in both training and evaluation.
+Exact deduplication cannot enforce an experiment's unseen-document requirement.
+
+The [runnable example](../examples/document-split/README.md) retains `document_id`:
+
+| Input and settings | Result | Reason |
 | --- | --- | --- |
-| Catch supported structural faults | 128/128 target findings detected in a curated synthetic corpus; 32 clean controls without alarms | Recall and false alarms on independently labeled, real datasets |
-| Inspect results without reading CLI logs | Offline HTML report with severity/search filters and row-level guidance | Feedback from external users doing actual repairs |
-| Make experiments easier to reproduce | Dataset hashes, valid-image inventory hash, tool/library versions and settings in JSON | End-to-end experiment lineage, model and optimizer state tracking |
-| Review split leakage | Exact sample/input/image checks; opt-in source-group separation | Near-duplicate and semantic leakage; task-specific grouping validity |
-| Put validation before GPU scheduling | Exit codes support a fail-fast shell or CI gate | Measured reduction in failed training jobs, operator time and GPU-hours |
-| Keep the initial check accessible | CPU implementation with recorded timings and RSS | Larger/unique images, cold storage, large issue sets and production workloads |
+| Train on manual A, page 1; evaluate on A, page 2; default checks | No findings | Both conversation and image bytes differ |
+| Same records with `--group-key document_id` | One `split_group_overlap` error | Both records belong to manual A |
+| Train on A; evaluate on B; keep the group check | No findings | The fixture's document groups are disjoint |
 
-See [benchmark methods](benchmarks.md). The corpus was constructed with knowledge
-of these rules. Its success rate is a regression measure, not independent proof
-of general accuracy. Data-Juicer, Cleanlab and existing trainer checks already
-address parts of this space; no comparative superiority has been measured.
+Split source documents first, then generate pages and questions within each split.
+Changing IDs to silence a finding does not fix the split. Shared documents may be
+appropriate when evaluating new questions about known documents; choose the unit
+that matches the research question. The checker compares supplied IDs, cannot
+verify their origin, and does not detect cropped, recompressed or semantic duplicates.
 
-## How it helps a research workflow
+## 3. Both model and data changed between runs
 
-1. **Methods and appendix:** preserve the checker version, exact input hashes,
-   split policy and report with the experiment. Reviewers can inspect which data
-   checks were performed, not just read a claim that data was cleaned.
-2. **Split design:** use a document/source/patient/topology identifier with
-   `--group-key` when the experimental question requires disjoint groups. The
-   tool cannot decide which grouping answers your scientific question.
-3. **Ablations:** compare raw data with reviewed/repaired data using the same
-   evaluation set, model revision, training budget and seeds. Track what changed
-   in the dataset instead of attributing every metric change to the model.
-4. **Software citation:** cite the actual version and repository using
-   [CITATION.cff](../CITATION.cff). No DOI, peer-review status or paper acceptance
-   is claimed.
+One run fixes answers and replaces images; another changes the model. Both datasets
+are named `train.jsonl`. Filenames and record counts do not establish equal inputs.
 
-[Lee et al., ACL 2022](https://aclanthology.org/2022.acl-long.577/) studied training
-deduplication and train-test overlap in language models. That work motivates
-careful data handling; its experimental improvements do not transfer automatically
-to this VLM checker. Our SHA-256 checks also do not implement that paper's full
-near-duplicate methods.
+The JSON report records dataset hashes, a valid-image inventory hash, checker
+version and settings. Archive it with the data snapshot and training configuration:
 
-### A publishable study would require additional work
+```bash
+vlm-data-doctor check data/train.jsonl --eval data/test.jsonl --image-root data --group-key document_id --format json --output audit.json
+```
 
-Candidate question: **Which image-text data faults cause training failures or
-distort evaluation, and how reliably can inexpensive preflight checks find them?**
+Compare `provenance.dataset_sha256` and `provenance.decoded_image_inventory_sha256`
+to check whether the recorded inputs changed. Hashes do not identify the edited
+row or recover old data. The image inventory excludes missing and corrupt files.
 
-- Build a permission-cleared, independently annotated corpus across multiple
-  sources and fault types. Keep a held-out evaluation corpus distinct from rule development.
-- Compare explicit baselines: basic JSON/schema checks, selected upstream trainer
-  checks, and suitable Data-Juicer operators. Match configurations and report coverage.
-- Score rule-level precision/recall with complete annotations, reviewer agreement,
-  false-positive analysis, runtime and peak memory.
-- Run controlled model experiments with fixed data splits, model revisions,
-  effective batch size, precision and image/token budgets. Report multiple seeds,
-  uncertainty, failed runs and negative results.
-- Compare repair decisions, not automatic deletion alone: filtering may change the
-  label distribution or make the task easier.
+## What a data-quality study still needs
 
-The current synthetic results and six-record upstream fixture check are useful
-engineering evidence; they are insufficient for those research conclusions.
+The current tool provides structural checks, explicit split-policy checks and
+input fingerprints. Studying downstream benefits requires additional evidence:
 
-## How it fits industry workflows
+- **Independent annotations:** separate rule development from held-out evaluation;
+  measure misses, false alarms and incorrectly removed records on real data.
+- **Controlled comparisons:** compare raw data, basic rules, selected existing
+  methods and the proposed method. Fix the model, test set and training budget;
+  report changes in data volume and task distribution.
+- **Downstream runs:** retain multiple seeds, training logs, evaluation results,
+  failure cases and data-processing costs.
 
-| Workflow | Placement | Deliverable |
-| --- | --- | --- |
-| Fine-tuning data delivery | After labeling/export, before trainer preprocessing | Report linked to the dataset version; repair queue with row/field locations |
-| CI or scheduled data build | Before submitting a GPU job | Nonzero exit on errors; optional strict warnings; HTML/JSON retained as artifacts |
-| Vendor dataset handoff | Before acceptance | Shared format profile and explicit acceptance criteria |
-| Experiment review | Before interpreting model metrics | Exact overlap and group-policy evidence alongside the evaluation report |
+[Lee et al., ACL 2022](https://aclanthology.org/2022.acl-long.577/) studied
+deduplication and train-test overlap in text language models. That motivates the
+question; it does not establish this checker's effectiveness for VLMs. Neither do
+the current [synthetic regression and CPU measurements](benchmarks.md).
 
-[LlamaFactory integration](integrations/llamafactory.md) provides a concrete
-dataset mapping and gate. The core auditor performs no network calls, never
-loads a model and does not rewrite the dataset. Reports avoid source conversation
-contents, ID values and image filenames; hashes and findings are still dataset
-metadata and should follow your organization's sharing rules.
+In a training pilot, record actual findings, repair time and false alarms.
+GPU savings and model-quality gains each require their own measurements.
 
-For a production pilot, define a target before rollout: for example, at least
-three independent dataset owners can install the tool, understand its findings
-and complete a documented repair/recheck workflow. Collect false alarms and
-operator minutes per audit. A sensible field target can then be based on a pilot
-baseline instead of an invented improvement percentage.
-
-If measuring savings, record actually avoided failed attempts, the number of GPUs
-allocated per attempt, and time spent before failure. Compare equivalent workflows
-with and without the preflight gate. This project has no GPU-hours or cost-savings
-measurement yet.
-
-## Current limitations
-
-Passing this profile does not verify label correctness, task solvability, PII,
-dataset licensing, tokenizer behavior, image preprocessing, truncation, training
-convergence, semantic duplication or fairness. Framework integration must still
-include a small real training smoke test. It is appropriate to call v0.2 a public
-preview, not a certified production or research system.
+[README](../README.md) · [Rules and limits](checks.md) · [Next work](roadmap.md)

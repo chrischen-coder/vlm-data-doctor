@@ -7,6 +7,9 @@ Run `python examples/generate.py` from a development environment to regenerate t
 - `clean/`: two training records and one evaluation record with separate images.
 - `broken/`: a missing image marker, a missing file, and a train/eval shared sample.
   Run this fixture with `--image-root examples/clean`.
+- [`document-split/`](document-split/README.md): different pages and questions
+  from one generated manual pass exact checks but fail a document-disjoint policy.
+  Includes a separate manual for the passing comparison. [中文步骤](document-split/README.zh-CN.md).
 
 These fixtures demonstrate rule behavior only. They are not a fault-detection
 benchmark, evidence of model quality, or a measured representation of user data.
