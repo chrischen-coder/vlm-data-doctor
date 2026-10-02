@@ -1,37 +1,26 @@
-# Roadmap and acceptance criteria
+# Next work
 
-v0.2.0 is a public preview with a deliberately small still-image SFT profile.
-Items marked complete are implemented, not evidence of field adoption.
+The current release checks SFT structure, exact overlap and supplied source groups.
+It also records input fingerprints. See the [document split example](../examples/document-split/README.md)
+for a case where exact deduplication alone is insufficient.
 
-## Available in v0.2
+The items below are not implemented or measured yet.
 
-- [x] JSON/JSONL and common ShareGPT/messages conversations.
-- [x] Conversation, image-marker, local image decoding and path checks.
-- [x] Within-split duplicates and exact train/evaluation overlap.
-- [x] Opt-in source/document/topology group-disjoint checks.
-- [x] Offline HTML review, JSON/Markdown/text output and CI exit codes.
-- [x] Input hashes, profile, versions and settings for experiment records.
-- [x] Reproducible synthetic fault corpus and measured CPU timing/RSS.
-- [x] Pinned upstream example check, bilingual documentation and a mapping recipe.
+| Problem to investigate | Proposed work | Evidence needed before claiming it works |
+| --- | --- | --- |
+| Rules pass synthetic cases, but misses and false alarms on real data are unknown | Build independently annotated development and held-out datasets from several sources | Rule-level precision/recall, annotation agreement and failure cases; no reuse of test cases to tune rules |
+| The same image can cross splits after recompression or resizing | Add optional near-duplicate candidate detection, then review suspected pairs | Compare byte hashing, perceptual hashing and an image-feature baseline; report pair-level precision/recall, review volume and cost |
+| Visually similar pages can still contain different answers | Include same-template documents, changed numbers and distinct questions as hard negatives | Show which legitimate examples would be wrongly flagged or removed |
+| A clean audit does not establish trainer compatibility | Run a pinned model/tokenizer/processor training smoke test | Environment, data revision, command and actual forward/backward logs |
+| Reused small images hide I/O and decoding costs | Profile unique high-resolution images and large finding sets | Data sizes, cache conditions, runtime, peak memory and report size |
+| Filtering can change data volume and task difficulty as well as quality | Compare raw, rule-filtered and candidate-method data under controlled training budgets | Fixed evaluation set, multiple seeds, task distribution, model metrics and processing cost |
 
-## Next milestone: prove usefulness on real workflows
+Start with independently labeled failures and simple baselines. Add semantic
+scoring only when it addresses a measured gap. A low image-text similarity score
+alone is not enough to reject OCR, counting or reasoning examples.
 
-- [ ] Three independent dataset owners complete installation, repair/recheck and
-  report archiving; record failures and time spent. No such adoption is claimed yet.
-- [ ] Build an independently annotated held-out corpus; publish rule-level
-  precision/recall, false alarms, annotator agreement and failure analysis.
-- [ ] Run a version-pinned trainer/tokenizer/model smoke test on appropriate hardware;
-  a static fixture check does not satisfy this criterion.
-- [ ] Profile unique high-resolution images, large finding sets and cold-storage I/O.
-- [ ] Add adapters/rule configuration only for documented user workflows.
+For field feedback, collect a minimal reproducible input, the expected behavior
+and the repair a user actually made. Three completed external trials would be a
+useful first checkpoint; none is currently claimed.
 
-## Later, if evidence justifies the complexity
-
-- [ ] Calibrated perceptual-image and semantic near-duplicate review.
-- [ ] Disk-backed indexes, bounded report output and resumable large-dataset audits.
-- [ ] Optional model-specific tokenizer and image-processor profiles.
-- [ ] Controlled downstream data-quality ablations with raw/repaired data, fixed
-  evaluation sets, multiple seeds and complete training logs.
-
-Expected scientific and operational benefits, and what would actually establish
-them, are specified in [impact.md](impact.md) and [中文说明](impact.zh-CN.md).
+[Use cases](impact.md) · [中文场景说明](impact.zh-CN.md) · [Contributing](../CONTRIBUTING.md)

@@ -3,6 +3,27 @@
 This profile is for paired supervised conversations with local still images. It
 is intentionally stricter and narrower than the union of all trainer formats.
 
+## Input and API
+
+Use a JSON array or JSONL. `messages` turns use `role`/`content` with
+`system`/`user`/`assistant`; ShareGPT `conversations` use `from`/`value` with
+`system`/`human`/`gpt`. An optional top-level `system` string is also accepted.
+There must be at most one initial system turn, followed by user/assistant pairs.
+Text-only records can omit `images`; image paths must be local and relative.
+
+```python
+from vlm_data_doctor import audit
+
+report = audit("data/train.jsonl", evaluation="data/test.jsonl",
+               image_root="data", group_key="document_id")
+print(report.render("json"))
+```
+
+Omit `group_key` when no group-disjoint policy is required. `eval_image_root`
+overrides the common image root for evaluation; without either override, paths
+resolve relative to each dataset file. The API returns findings for data defects
+and raises exceptions for I/O, encoding and configuration failures.
+
 ## Rule catalog
 
 | Code | Level | Interpretation / suggested action |
@@ -88,3 +109,21 @@ is preferable for very large issue sets.
 More than one finding can refer to a record; finding counts are not failed-record
 counts. Reports use input order and do not include timestamps, so the same input
 and environment produce deterministic output.
+
+## Operational limits
+
+- The default limit is 40 million pixels per image. `--max-pixels` changes it;
+  Pillow's own decompression protection still applies. Animated images are rejected.
+- JSONL is read row by row, but sample/image indexes and findings remain in memory.
+  JSON arrays load in full. This is not a bounded-memory dataset pipeline.
+- JSONL locations are physical line numbers, including blank lines in the count.
+  JSON-array rows are one-based positions; row 0 identifies a dataset-level issue.
+- Text, JSON, Markdown and HTML output are supported. Output directories must exist,
+  and the CLI refuses to overwrite a file. Exit `1` still writes the report;
+  exit `2` indicates a CLI, configuration, I/O, encoding or report-writing failure.
+- Keep inputs unchanged during an audit: hashing and validation read them separately.
+  The manifest records fingerprints, not a recoverable dataset snapshot.
+- Tool calls, preference/RL records, video/audio, remote images, structured content
+  blocks and arbitrary field remapping are outside this profile.
+- Passing does not verify answer correctness, privacy, data licensing, tokenizer
+  behavior or training success. Run a small training smoke test with your actual stack.

@@ -1,0 +1,1 @@
+{"document_id": "manual-a", "messages": [{"role": "user", "content": "<image>Which team owns this manual?"}, {"role": "assistant", "content": "North team"}], "images": ["manual-a-page-1.png"]}

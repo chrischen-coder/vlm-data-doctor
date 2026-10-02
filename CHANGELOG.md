@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Rewrite the English and Chinese guides around export failures, document-level split overlap and changed experiment inputs.
+- Add a generated document QA example showing default checks, source-group overlap and a disjoint comparison.
+- Document the current algorithms and define the missing evidence for near-duplicate and downstream data-quality work.
+
 ## 0.2.0 — 2026-10-02 · public preview
 
 - Add an offline HTML report with severity filters, search, review guidance and a reproducibility manifest.
