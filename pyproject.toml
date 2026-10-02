@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vlm-data-doctor"
+version = "0.1.0"
+description = "Offline preflight checks for image-text fine-tuning datasets."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "chrischen-coder"}]
+dependencies = ["Pillow>=12.1.1,<13"]
+keywords = ["multimodal", "dataset", "validation", "fine-tuning", "vlm"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.scripts]
+vlm-data-doctor = "vlm_data_doctor.cli:main"
+
+[project.urls]
+Repository = "https://github.com/chrischen-coder/vlm-data-doctor"
+Issues = "https://github.com/chrischen-coder/vlm-data-doctor/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]

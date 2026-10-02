@@ -1,0 +1,1 @@
+{"messages": [{"role": "user", "content": "<image>What color is this square?"}, {"role": "assistant", "content": "Green."}], "images": ["green.png"]}
