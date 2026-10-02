@@ -31,7 +31,8 @@ def main() -> None:
                          "axes.spines.top": False, "axes.spines.right": False,
                          "axes.labelcolor": "#425653", "text.color": "#18332e",
                          "xtick.color": "#425653", "ytick.color": "#425653",
-                         "axes.edgecolor": "#cad8d1", "svg.fonttype": "none"})
+                         "axes.edgecolor": "#cad8d1", "svg.fonttype": "none",
+                         "svg.hashsalt": "vlm-data-doctor-v0.2"})
     fig, axes = plt.subplots(1, 3, figsize=(15.6, 5.7), gridspec_kw={"width_ratios": [1.06, 1, 1]})
     fig.patch.set_facecolor("#f6f8f5")
     for ax in axes:
@@ -75,6 +76,8 @@ def main() -> None:
     fig.subplots_adjust(left=.065, right=.975, top=.77, bottom=.28, wspace=.38)
     fig.savefig(assets / "benchmark.png", dpi=160, facecolor=fig.get_facecolor())
     fig.savefig(assets / "benchmark.svg", facecolor=fig.get_facecolor(), metadata={"Date": None})
+    svg = assets / "benchmark.svg"
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text().splitlines()) + "\n", encoding="utf-8")
     plt.close(fig)
     (assets / "workflow.svg").write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="240" viewBox="0 0 1200 240" role="img" aria-label="Local data goes through preflight checks, evidence review, then training smoke test">
 <rect width="1200" height="240" rx="18" fill="#f4f7f3"/>
